@@ -4,6 +4,22 @@ A compact multi-LoRA loader built for ComfyUI Nodes 2.0. It does not modify or d
 
 为 ComfyUI Nodes 2.0 设计的简洁多 LoRA 加载器，不修改、也不依赖 rgthree。
 
+Current version / 当前版本：`0.2.0`
+
+## What's new in 0.2.0 / 0.2.0 更新说明
+
+### English
+
+- The complete node UI now follows ComfyUI's Chinese or English language setting, including node definitions, controls, messages, and accessibility labels.
+- The Nodes 2.0 interactions were rechecked on macOS: select all, refresh, add, remove, strength editing, and automatic node sizing remain available.
+- Existing workflow state and the optional rgthree migration path remain compatible.
+
+### 中文
+
+- 节点完整界面现在会跟随 ComfyUI 的中文或英文语言设置，包括节点定义、控件、消息和无障碍标签。
+- 已在 macOS 重新检查 Nodes 2.0 交互：全选、刷新、添加、删除、强度编辑和节点自动缩放均保持可用。
+- 保持现有工作流状态格式以及可选的 rgthree 迁移流程兼容。
+
 ## Features / 功能
 
 - Enable or disable each LoRA independently / 逐行启用或停用 LoRA

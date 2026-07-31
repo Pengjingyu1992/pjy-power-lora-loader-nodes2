@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import sys
 import tempfile
+import tomllib
 import unittest
 from unittest import mock
 
@@ -107,6 +108,13 @@ class PowerLoraLoaderTests(unittest.TestCase):
             self.assertEqual(node_definition["display_name"], expected_name)
             self.assertEqual(set(node_definition["inputs"]), {"model", "clip", "lora_state"})
             self.assertEqual(set(node_definition["outputs"]), {"0", "1"})
+
+    def test_release_version_is_documented(self):
+        metadata = tomllib.loads((PLUGIN_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+        version = metadata["project"]["version"]
+        self.assertEqual(version, "0.2.0")
+        self.assertIn(f"当前版本：`{version}`", (PLUGIN_ROOT / "README.md").read_text(encoding="utf-8"))
+        self.assertIn(f"## {version} - ", (PLUGIN_ROOT / "CHANGELOG.md").read_text(encoding="utf-8"))
 
     def test_v3_entrypoint_registers_only_the_expected_node(self):
         extension = asyncio.run(MODULE.comfy_entrypoint())
