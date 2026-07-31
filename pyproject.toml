@@ -1,0 +1,12 @@
+[project]
+name = "pjy-power-lora-loader-nodes2"
+version = "0.1.0"
+description = "A native Nodes 2.0 multi-LoRA loader for ComfyUI"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/Pengjingyu1992/pjy-power-lora-loader-nodes2"
+Issues = "https://github.com/Pengjingyu1992/pjy-power-lora-loader-nodes2/issues"
