@@ -1,5 +1,6 @@
 import { app } from "../../scripts/app.js";
 import { api } from "../../scripts/api.js";
+import { createTranslator, resolveLanguage } from "./i18n.js";
 
 const NODE_ID = "PJYPowerLoraLoaderV2";
 const OLD_NODE_ID = "Power Lora Loader (rgthree)";
@@ -8,6 +9,33 @@ const STATE_VERSION = 1;
 const DEFAULT_STATE = Object.freeze({ version: STATE_VERSION, separate_strengths: false, loras: [] });
 let widgetSequence = 0;
 let cachedLoraNames = null;
+let activeLanguage = "en";
+let translate = createTranslator(activeLanguage);
+const languageRenders = new Set();
+
+function readComfyLanguage() {
+  let stored;
+  try {
+    stored = app?.ui?.settings?.getSettingValue?.("Comfy.Locale")
+      ?? app?.extensionManager?.setting?.get?.("Comfy.Locale");
+  } catch {
+    stored = undefined;
+  }
+  return resolveLanguage(stored || document.documentElement.lang || navigator.languages || navigator.language);
+}
+
+function syncLanguage() {
+  const nextLanguage = readComfyLanguage();
+  if (nextLanguage === activeLanguage) return false;
+  activeLanguage = nextLanguage;
+  translate = createTranslator(activeLanguage);
+  return true;
+}
+
+function refreshLanguageWidgets() {
+  if (!syncLanguage()) return;
+  languageRenders.forEach((render) => render());
+}
 
 function numberOr(value, fallback) {
   const number = Number(value);
@@ -68,10 +96,11 @@ function stateFromRgthree(node) {
 async function loadLoraNames(force = false) {
   if (cachedLoraNames && !force) return cachedLoraNames;
   const response = await api.fetchApi("/object_info/LoraLoader");
-  if (!response.ok) throw new Error(`LoRA 列表读取失败 (${response.status})`);
+  if (!response.ok) throw new Error(translate("loraListLoadFailed", { status: response.status }));
   const data = await response.json();
   const names = data?.LoraLoader?.input?.required?.lora_name?.[0];
-  cachedLoraNames = Array.isArray(names) ? [...names].sort((a, b) => a.localeCompare(b, "zh-CN")) : [];
+  const locale = activeLanguage === "zh" ? "zh-CN" : "en";
+  cachedLoraNames = Array.isArray(names) ? [...names].sort((a, b) => a.localeCompare(b, locale)) : [];
   return cachedLoraNames;
 }
 
@@ -150,6 +179,7 @@ function createPowerLoraWidget(node, inputName, inputData) {
   };
 
   const render = () => {
+    syncLanguage();
     root.querySelectorAll(":scope > :not(datalist)").forEach((element) => element.remove());
     root.classList.toggle("pjy-pl2--separate", state.separate_strengths);
 
@@ -159,7 +189,7 @@ function createPowerLoraWidget(node, inputName, inputData) {
     const allLabel = document.createElement("label");
     const allToggle = document.createElement("input");
     allToggle.type = "checkbox";
-    allToggle.setAttribute("aria-label", "全部启用或停用");
+    allToggle.setAttribute("aria-label", translate("toggleAll"));
     const enabledCount = state.loras.filter((row) => row.enabled).length;
     allToggle.checked = state.loras.length > 0 && enabledCount === state.loras.length;
     allToggle.indeterminate = enabledCount > 0 && enabledCount < state.loras.length;
@@ -168,13 +198,13 @@ function createPowerLoraWidget(node, inputName, inputData) {
       syncWidget();
       render();
     });
-    allLabel.append(allToggle, "全选");
+    allLabel.append(allToggle, translate("selectAll"));
 
     const mergeButton = state.separate_strengths ? document.createElement("button") : null;
     if (mergeButton) {
       mergeButton.type = "button";
-      mergeButton.title = "把模型与 CLIP 强度合并为统一强度";
-      mergeButton.textContent = "合并强度";
+      mergeButton.title = translate("mergeStrengthsTitle");
+      mergeButton.textContent = translate("mergeStrengths");
       mergeButton.addEventListener("click", () => {
         state.loras.forEach((row) => { row.strength_clip = row.strength_model; });
         state.separate_strengths = false;
@@ -185,18 +215,18 @@ function createPowerLoraWidget(node, inputName, inputData) {
 
     const status = document.createElement("span");
     status.className = "pjy-pl2__status";
-    status.title = "已启用 / 总数";
+    status.title = translate("enabledCount");
     status.setAttribute("aria-live", "polite");
     status.textContent = `${enabledCount}/${state.loras.length}`;
 
     const refreshButton = document.createElement("button");
     refreshButton.type = "button";
-    refreshButton.title = "刷新 LoRA 列表";
-    refreshButton.setAttribute("aria-label", "刷新 LoRA 列表");
+    refreshButton.title = translate("refreshList");
+    refreshButton.setAttribute("aria-label", translate("refreshList"));
     refreshButton.textContent = "↻";
     refreshButton.addEventListener("click", async () => {
       refreshButton.disabled = true;
-      status.textContent = "正在刷新…";
+      status.textContent = translate("refreshing");
       try {
         loraNames = await loadLoraNames(true);
         updateDatalist();
@@ -211,7 +241,7 @@ function createPowerLoraWidget(node, inputName, inputData) {
     const addButton = document.createElement("button");
     addButton.type = "button";
     addButton.textContent = "+ LoRA";
-    addButton.setAttribute("aria-label", "添加 LoRA");
+    addButton.setAttribute("aria-label", translate("addLora"));
     addButton.addEventListener("click", () => {
       const next = state.loras.length + 1;
       state.loras.push({
@@ -236,7 +266,7 @@ function createPowerLoraWidget(node, inputName, inputData) {
     if (!state.loras.length) {
       const empty = document.createElement("div");
       empty.className = "pjy-pl2__empty";
-      empty.textContent = "添加一个 LoRA";
+      empty.textContent = translate("emptyList");
       rows.appendChild(empty);
     }
 
@@ -257,11 +287,11 @@ function createPowerLoraWidget(node, inputName, inputData) {
 
       const drag = document.createElement("span");
       drag.className = "pjy-pl2__drag";
-      drag.title = "拖动排序";
+      drag.title = translate("dragToReorder");
       drag.textContent = "⠿";
       drag.draggable = true;
       drag.setAttribute("role", "button");
-      drag.setAttribute("aria-label", "拖动排序");
+      drag.setAttribute("aria-label", translate("dragToReorder"));
       drag.addEventListener("dragstart", (event) => {
         draggedIndex = index;
         event.dataTransfer?.setData("text/plain", row.id);
@@ -272,8 +302,8 @@ function createPowerLoraWidget(node, inputName, inputData) {
       const enabled = document.createElement("input");
       enabled.type = "checkbox";
       enabled.checked = row.enabled;
-      enabled.title = "启用/停用";
-      enabled.setAttribute("aria-label", `启用或停用第 ${index + 1} 个 LoRA`);
+      enabled.title = translate("toggleEnabled");
+      enabled.setAttribute("aria-label", translate("toggleRow", { index: index + 1 }));
       enabled.addEventListener("change", () => {
         row.enabled = enabled.checked;
         syncWidget();
@@ -285,14 +315,14 @@ function createPowerLoraWidget(node, inputName, inputData) {
       file.type = "text";
       file.value = row.file;
       file.setAttribute("list", listId);
-      file.placeholder = "输入或选择 LoRA…";
+      file.placeholder = translate("filePlaceholder");
       file.autocomplete = "off";
       file.spellcheck = false;
-      file.setAttribute("aria-label", `第 ${index + 1} 个 LoRA 文件`);
+      file.setAttribute("aria-label", translate("fileRow", { index: index + 1 }));
       const updateMissing = () => {
         const missing = Boolean(file.value) && loraNames.length > 0 && !loraNames.includes(file.value);
         file.dataset.missing = String(missing);
-        file.title = missing ? "未找到这个 LoRA 文件" : file.value;
+        file.title = missing ? translate("missingFile") : file.value;
       };
       updateMissing();
       file.addEventListener("input", () => {
@@ -310,7 +340,7 @@ function createPowerLoraWidget(node, inputName, inputData) {
         input.step = "0.05";
         input.value = String(row[key]);
         input.title = title;
-        input.setAttribute("aria-label", `第 ${index + 1} 个 LoRA ${title}`);
+        input.setAttribute("aria-label", translate("rowControl", { index: index + 1, label: title }));
         input.addEventListener("input", () => {
           if (!Number.isFinite(input.valueAsNumber)) return;
           row[key] = input.valueAsNumber;
@@ -323,15 +353,20 @@ function createPowerLoraWidget(node, inputName, inputData) {
         return input;
       };
 
-      const modelStrength = makeStrength("strength_model", state.separate_strengths ? "模型强度" : "统一强度");
-      const clipStrength = state.separate_strengths ? makeStrength("strength_clip", "CLIP 强度") : null;
+      const modelStrength = makeStrength(
+        "strength_model",
+        translate(state.separate_strengths ? "modelStrength" : "unifiedStrength"),
+      );
+      const clipStrength = state.separate_strengths
+        ? makeStrength("strength_clip", translate("clipStrength"))
+        : null;
 
       const remove = document.createElement("button");
       remove.type = "button";
       remove.className = "pjy-pl2__icon";
-      remove.title = "删除";
+      remove.title = translate("remove");
       remove.textContent = "×";
-      remove.setAttribute("aria-label", `删除第 ${index + 1} 个 LoRA`);
+      remove.setAttribute("aria-label", translate("removeRow", { index: index + 1 }));
       remove.addEventListener("click", () => {
         state.loras.splice(index, 1);
         syncWidget();
@@ -359,12 +394,19 @@ function createPowerLoraWidget(node, inputName, inputData) {
   });
   domWidget.element.style.pointerEvents = "auto";
   node.__pjyPowerLoraWidget = domWidget;
+  languageRenders.add(render);
 
   const originalConfigure = node.onConfigure;
   node.onConfigure = function (info) {
     originalConfigure?.call(this, info);
     lastLayoutKey = "";
     render();
+  };
+
+  const originalRemoved = node.onRemoved;
+  node.onRemoved = function () {
+    languageRenders.delete(render);
+    originalRemoved?.apply(this, arguments);
   };
 
   node.__pjyPowerLoraSetState = (value) => {
@@ -404,7 +446,7 @@ function migrateRgthreeNode(node) {
   graph.beforeChange?.();
   try {
     const replacement = liteGraph.createNode(NODE_ID);
-    if (!replacement) throw new Error("无法创建权重 LoRA 加载器 2.0");
+    if (!replacement) throw new Error(translate("migrationCreateFailed"));
     graph.add(replacement);
     replacement.pos = [node.pos[0] + node.size[0] + 60, node.pos[1]];
     replacement.color = node.color;
@@ -418,7 +460,7 @@ function migrateRgthreeNode(node) {
       replacement.connect(link.originSlot, graph.getNodeById(link.targetId), link.targetSlot);
     }
     node.mode = 4;
-    node.title = `${node.title || OLD_NODE_ID}（已迁移/旁路）`;
+    node.title = `${node.title || OLD_NODE_ID}${translate("migratedSuffix")}`;
     graph.change?.();
     app.canvas?.selectNode?.(replacement);
     app.canvas?.setDirty?.(true, true);
@@ -428,6 +470,13 @@ function migrateRgthreeNode(node) {
 }
 
 addStyles();
+
+syncLanguage();
+window.addEventListener("languagechange", refreshLanguageWidgets);
+new MutationObserver(refreshLanguageWidgets).observe(document.documentElement, {
+  attributes: true,
+  attributeFilter: ["lang"],
+});
 
 app.registerExtension({
   name: "pjy.power-lora-loader.nodes2",
@@ -443,7 +492,7 @@ app.registerExtension({
     return [
       null,
       {
-        content: "迁移为：权重 LoRA 加载器 2.0",
+        content: translate("migrateMenu"),
         callback: () => migrateRgthreeNode(node),
       },
     ];

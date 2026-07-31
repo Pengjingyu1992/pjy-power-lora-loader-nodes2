@@ -1,0 +1,25 @@
+{
+  "PJYPowerLoraLoaderV2": {
+    "display_name": "Power LoRA Loader 2.0",
+    "description": "A multi-LoRA loader designed for Nodes 2.0. Enabled LoRAs are applied in list order.",
+    "inputs": {
+      "model": {
+        "name": "MODEL"
+      },
+      "clip": {
+        "name": "CLIP"
+      },
+      "lora_state": {
+        "name": "LoRA configuration"
+      }
+    },
+    "outputs": {
+      "0": {
+        "name": "MODEL"
+      },
+      "1": {
+        "name": "CLIP"
+      }
+    }
+  }
+}

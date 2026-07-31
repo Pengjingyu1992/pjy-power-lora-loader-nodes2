@@ -1,0 +1,25 @@
+{
+  "PJYPowerLoraLoaderV2": {
+    "display_name": "权重 LoRA 加载器 2.0",
+    "description": "为 Nodes 2.0 设计的多 LoRA 加载器。按列表顺序应用已启用的 LoRA。",
+    "inputs": {
+      "model": {
+        "name": "模型"
+      },
+      "clip": {
+        "name": "CLIP"
+      },
+      "lora_state": {
+        "name": "LoRA 配置"
+      }
+    },
+    "outputs": {
+      "0": {
+        "name": "模型"
+      },
+      "1": {
+        "name": "CLIP"
+      }
+    }
+  }
+}

@@ -14,8 +14,9 @@ A compact multi-LoRA loader built for ComfyUI Nodes 2.0. It does not modify or d
 - Node height follows the number of rows / 节点高度随 LoRA 数量自动调整
 - Workflow save, clone, copy/paste, and API serialization / 支持工作流保存、克隆、复制粘贴和 API 序列化
 - Optional migration from `Power Lora Loader (rgthree)` / 可选迁移 rgthree 的旧节点
+- Follows ComfyUI's Chinese or English language setting / 跟随 ComfyUI 的中文或英文语言设置
 
-Node name / 节点名称：`权重 LoRA 加载器 2.0`  
+Node name / 节点名称：`Power LoRA Loader 2.0` / `权重 LoRA 加载器 2.0`
 Node ID / 内部类型：`PJYPowerLoraLoaderV2`  
 Category / 分类：`loaders/LoRA`
 
@@ -56,7 +57,7 @@ Restart ComfyUI after installation / 安装后重启 ComfyUI。
 
 ## Usage / 使用
 
-1. Add `权重 LoRA 加载器 2.0` from `loaders/LoRA`.
+1. Add `Power LoRA Loader 2.0` / `权重 LoRA 加载器 2.0` from `loaders/LoRA`.
 2. Connect MODEL and/or CLIP.
 3. Select `+ LoRA`, choose a file, set its strength, and enable the row.
 4. LoRAs are applied from top to bottom.
@@ -64,6 +65,10 @@ Restart ComfyUI after installation / 安装后重启 ComfyUI。
 默认只显示一个统一强度。只有从旧工作流迁移来的独立 MODEL/CLIP 强度才会显示双强度；可点击“合并强度”恢复简洁界面。
 
 排序只能从每行左侧拖拽柄开始，因此编辑文件名或强度时不会误触拖动。
+
+The node reads ComfyUI's `Comfy.Locale` setting and provides a complete English and Chinese UI. `zh-*` locale variants use the Chinese fallback. If the node is already open when you change the language, reload the ComfyUI page once.
+
+节点读取 ComfyUI 的 `Comfy.Locale` 设置，提供完整中英文界面；`zh-*` 语言变体使用中文回退。如果切换语言时节点已经打开，请重新加载一次 ComfyUI 页面。
 
 ## Migrating from rgthree / 从 rgthree 迁移
 
@@ -90,6 +95,7 @@ Run tests inside a compatible ComfyUI Python environment:
 ```bash
 python -m unittest discover -s tests -v
 node --check js/power_lora_loader.js
+node --test tests/test_i18n.mjs
 ```
 
 ## License

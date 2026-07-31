@@ -60,7 +60,7 @@ class PJYPowerLoraLoaderV2(io.ComfyNode):
     def define_schema(cls):
         lora_state = io.String.Input(
             "lora_state",
-            display_name="LoRA 配置",
+            display_name="LoRA configuration",
             default=DEFAULT_LORA_STATE,
             multiline=False,
             socketless=True,
@@ -68,17 +68,17 @@ class PJYPowerLoraLoaderV2(io.ComfyNode):
         lora_state.widget_type = LORA_STATE_WIDGET
         return io.Schema(
             node_id="PJYPowerLoraLoaderV2",
-            display_name="权重 LoRA 加载器 2.0",
+            display_name="Power LoRA Loader 2.0",
             category="loaders/LoRA",
-            description="为 Nodes 2.0 设计的多 LoRA 加载器。按列表顺序应用已启用的 LoRA。",
+            description="A multi-LoRA loader designed for Nodes 2.0. Enabled LoRAs are applied in list order.",
             search_aliases=["Power LoRA Loader", "权重Lora加载器", "LoRA Loader 2.0"],
             inputs=[
-                io.Model.Input("model", display_name="模型", optional=True),
+                io.Model.Input("model", display_name="MODEL", optional=True),
                 io.Clip.Input("clip", display_name="CLIP", optional=True),
                 lora_state,
             ],
             outputs=[
-                io.Model.Output(display_name="模型"),
+                io.Model.Output(display_name="MODEL"),
                 io.Clip.Output(display_name="CLIP"),
             ],
         )

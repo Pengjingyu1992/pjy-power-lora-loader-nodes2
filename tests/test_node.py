@@ -96,6 +96,18 @@ class PowerLoraLoaderTests(unittest.TestCase):
         self.assertEqual(schema.inputs[2].get_io_type(), "PJY_POWER_LORA_STATE")
         self.assertEqual([output.io_type for output in schema.outputs], ["MODEL", "CLIP"])
 
+    def test_locale_files_cover_the_node_definition(self):
+        expected_names = {
+            "en": "Power LoRA Loader 2.0",
+            "zh": "权重 LoRA 加载器 2.0",
+        }
+        for language, expected_name in expected_names.items():
+            locale_file = PLUGIN_ROOT / "locales" / language / "nodeDefs.json"
+            node_definition = json.loads(locale_file.read_text(encoding="utf-8"))["PJYPowerLoraLoaderV2"]
+            self.assertEqual(node_definition["display_name"], expected_name)
+            self.assertEqual(set(node_definition["inputs"]), {"model", "clip", "lora_state"})
+            self.assertEqual(set(node_definition["outputs"]), {"0", "1"})
+
     def test_v3_entrypoint_registers_only_the_expected_node(self):
         extension = asyncio.run(MODULE.comfy_entrypoint())
         node_list = asyncio.run(extension.get_node_list())
