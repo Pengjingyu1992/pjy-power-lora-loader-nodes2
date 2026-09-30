@@ -1,6 +1,6 @@
 [project]
 name = "pjy-power-lora-loader-nodes2"
-version = "0.2.0"
+version = "0.2.1"
 description = "A native Nodes 2.0 multi-LoRA loader for ComfyUI"
 readme = "README.md"
 requires-python = ">=3.10"

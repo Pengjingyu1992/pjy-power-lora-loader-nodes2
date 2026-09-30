@@ -112,7 +112,7 @@ class PowerLoraLoaderTests(unittest.TestCase):
     def test_release_version_is_documented(self):
         metadata = tomllib.loads((PLUGIN_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
         version = metadata["project"]["version"]
-        self.assertEqual(version, "0.2.0")
+        self.assertEqual(version, "0.2.1")
         self.assertIn(f"当前版本：`{version}`", (PLUGIN_ROOT / "README.md").read_text(encoding="utf-8"))
         self.assertIn(f"## {version} - ", (PLUGIN_ROOT / "CHANGELOG.md").read_text(encoding="utf-8"))
 

@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.2.1 - 2026-09-30
+
+### English
+
+- Fix the LoRA file picker showing only the selected file when reopened.
+- Allow switching LoRAs without deleting and recreating the row.
+- Preserve the saved file when leaving an empty search, and retain strengths when replacing a file.
+- Verify switching on macOS with Comfy Desktop 1.1.3.
+
+### 中文
+
+- 修复重新展开 LoRA 文件选择器时只显示当前文件的问题。
+- 支持直接切换 LoRA，无需删除并重建该行。
+- 离开空搜索时保留已保存文件，替换文件时保留强度。
+- 已在 macOS、Comfy Desktop 1.1.3 中验证切换行为。
+
 ## 0.2.0 - 2026-08-01
 
 ### English

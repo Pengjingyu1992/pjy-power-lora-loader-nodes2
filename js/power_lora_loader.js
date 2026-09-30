@@ -325,6 +325,18 @@ function createPowerLoraWidget(node, inputName, inputData) {
         file.title = missing ? translate("missingFile") : file.value;
       };
       updateMissing();
+      const startSearch = () => {
+        file.value = "";
+        updateMissing();
+      };
+      file.addEventListener("focus", startSearch);
+      file.addEventListener("pointerdown", () => {
+        if (loraNames.includes(file.value)) startSearch();
+      });
+      file.addEventListener("blur", () => {
+        file.value = row.file;
+        updateMissing();
+      });
       file.addEventListener("input", () => {
         row.file = file.value;
         updateMissing();

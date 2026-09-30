@@ -4,21 +4,21 @@ A compact multi-LoRA loader built for ComfyUI Nodes 2.0. It does not modify or d
 
 为 ComfyUI Nodes 2.0 设计的简洁多 LoRA 加载器，不修改、也不依赖 rgthree。
 
-Current version / 当前版本：`0.2.0`
+Current version / 当前版本：`0.2.1`
 
-## What's new in 0.2.0 / 0.2.0 更新说明
+## What's new in 0.2.1 / 0.2.1 更新说明
 
 ### English
 
-- The complete node UI now follows ComfyUI's Chinese or English language setting, including node definitions, controls, messages, and accessibility labels.
-- The Nodes 2.0 interactions were rechecked on macOS: select all, refresh, add, remove, strength editing, and automatic node sizing remain available.
-- Existing workflow state and the optional rgthree migration path remain compatible.
+- Reopening an existing LoRA field shows the full installed list, so you can switch files without deleting the row.
+- Leaving the field without choosing a replacement keeps the saved LoRA. Replacing a file preserves the row's strengths and enabled state.
+- Verified the switching behavior on macOS with Comfy Desktop 1.1.3.
 
 ### 中文
 
-- 节点完整界面现在会跟随 ComfyUI 的中文或英文语言设置，包括节点定义、控件、消息和无障碍标签。
-- 已在 macOS 重新检查 Nodes 2.0 交互：全选、刷新、添加、删除、强度编辑和节点自动缩放均保持可用。
-- 保持现有工作流状态格式以及可选的 rgthree 迁移流程兼容。
+- 重新打开已选 LoRA 的输入框时显示完整安装列表，可以直接切换文件，无需删除该行。
+- 未选择替代文件就离开输入框时保留原 LoRA；替换文件时保留该行强度和启用状态。
+- 已在 macOS、Comfy Desktop 1.1.3 中验证切换行为。
 
 ## Features / 功能
 
@@ -43,9 +43,9 @@ Category / 分类：`loaders/LoRA`
 - Nodes 2.0 enabled
 - No additional Python or frontend dependencies
 
-The current release was verified on macOS with Comfy Desktop `1.0.34`. The code contains no OS-specific paths or APIs and is intended to work on Windows and Linux, but those systems have not yet been verified by the maintainer. Please report platform-specific problems with the information listed in [Contributing](CONTRIBUTING.md).
+The current release's LoRA switching behavior was verified on macOS with Comfy Desktop `1.1.3`. The code contains no OS-specific paths or APIs and is intended to work on Windows and Linux, but those systems have not yet been verified by the maintainer. Please report platform-specific problems with the information listed in [Contributing](CONTRIBUTING.md).
 
-当前版本已在 macOS、Comfy Desktop `1.0.34` 上验证。代码不包含操作系统专用路径或 API，设计上可用于 Windows 和 Linux，但维护者尚未在这两个系统上实测。遇到平台问题，请按 [参与测试](CONTRIBUTING.md) 中的格式反馈。
+当前版本的 LoRA 切换行为已在 macOS、Comfy Desktop `1.1.3` 上验证。代码不包含操作系统专用路径或 API，设计上可用于 Windows 和 Linux，但维护者尚未在这两个系统上实测。遇到平台问题，请按 [参与测试](CONTRIBUTING.md) 中的格式反馈。
 
 ## Installation / 安装
 
